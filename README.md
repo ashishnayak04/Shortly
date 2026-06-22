@@ -47,7 +47,7 @@
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | React 19, Vite, Tailwind CSS v4, Lucide React |
+| **Frontend** | React 19, Vite 8, Tailwind CSS v4, Lucide React |
 | **Backend** | Node.js, Express.js |
 | **Database** | MongoDB, Mongoose (with TTL index for auto-expiry) |
 | **Libraries** | nanoid (short codes), qrcode (QR generation), validator (URL validation), axios (HTTP), react-hot-toast (notifications), react-router-dom (routing) |
@@ -70,7 +70,6 @@ cd shortly
 
 # Install backend dependencies
 cd server
-cp .env.example .env
 npm install
 
 # Install frontend dependencies
@@ -80,7 +79,7 @@ npm install
 
 ### Configure Environment
 
-Edit `server/.env`:
+Create `server/.env`:
 
 ```env
 PORT=5000
@@ -147,6 +146,21 @@ POST /api/urls
 }
 ```
 
+**Response (List All / Stats):**
+
+```json
+{
+  "shortCode": "my-link",
+  "longUrl": "https://example.com/very-long-url",
+  "shortUrl": "http://localhost:5000/my-link",
+  "qrCode": "data:image/png;base64,...",
+  "clicks": 42,
+  "createdAt": "2025-01-01T00:00:00.000Z",
+  "lastVisited": "2025-06-15T14:30:00.000Z",
+  "expiresAt": "2025-12-31T23:59:00.000Z"
+}
+```
+
 ---
 
 ## 📁 Project Structure
@@ -155,30 +169,33 @@ POST /api/urls
 shortly/
 ├── server/                        # Backend (Node.js + Express)
 │   ├── src/
+│   │   ├── app.js                 # Express app setup (CORS, routes, error handler)
 │   │   ├── config/db.js           # MongoDB connection
 │   │   ├── controllers/           # Route handlers
-│   │   ├── middleware/            # Error handling
-│   │   ├── models/Url.js          # Mongoose schema (URL model)
+│   │   ├── middleware/            # Error handler middleware
+│   │   ├── models/Url.js          # Mongoose schema (URL model w/ TTL index)
 │   │   ├── routes/                # API route definitions
-│   │   ├── services/              # Business logic
+│   │   ├── services/              # Business logic (nanoid, QR gen, CRUD)
 │   │   └── utils/validators.js    # URL & alias validation
 │   ├── server.js                  # Entry point
 │   └── .env                       # Environment variables
 │
 ├── client/                        # Frontend (React + Vite)
 │   ├── src/
-│   │   ├── components/            # Reusable UI (UrlForm, ResultCard, Navbar, etc.)
+│   │   ├── components/            # Navbar, UrlForm, ResultCard, UrlTable,
+│   │   │                         # StatsCard, ExpirationSelector, LoadingSpinner
 │   │   ├── pages/                 # Home, Analytics, NotFound
 │   │   ├── services/api.js        # Axios API client
-│   │   ├── context/               # ThemeContext (dark mode)
-│   │   ├── hooks/                 # Custom React hooks
+│   │   ├── context/ThemeContext.jsx # Dark mode with system preference detection
+│   │   ├── hooks/useUrls.js       # URL state management hook
 │   │   ├── utils/helpers.js       # Formatting, clipboard, expiration
-│   │   └── layouts/               # MainLayout (navbar + outlet)
+│   │   ├── layouts/MainLayout.jsx # Navbar + Outlet
+│   │   ├── App.jsx                # Route definitions
+│   │   ├── main.jsx               # Entry point (BrowserRouter, ThemeProvider)
+│   │   └── index.css              # Tailwind & custom styles
 │   ├── index.html
-│   └── vite.config.js
+│   └── vite.config.js             # Vite config with Tailwind & API proxy
 │
-├── .env.example
-├── DEPLOYMENT.md
 └── README.md
 ```
 
@@ -190,11 +207,9 @@ Deploy the stack for free on:
 
 | Service | Role | Guide |
 |---|---|---|
-| [Render](https://render.com) | Backend (Node.js/Express) | Set root dir: `server`, start: `npm start` |
-| [Vercel](https://vercel.com) | Frontend (React/Vite) | Framework: Vite, root dir: `client` |
+| [Render](https://render.com) | Backend (Node.js/Express) | Set root dir: `server`, start command: `npm start` |
+| [Vercel](https://vercel.com) | Frontend (React/Vite) | Framework preset: Vite, root dir: `client` |
 | [MongoDB Atlas](https://www.mongodb.com/atlas) | Database (M0 free tier) | Whitelist `0.0.0.0/0` for production |
-
-A detailed deployment guide is available in [`DEPLOYMENT.md`](./DEPLOYMENT.md).
 
 ---
 

@@ -85,7 +85,24 @@ export default function UrlForm({ onSubmit, creating }) {
       <button
         type="submit"
         disabled={creating || !longUrl.trim()}
-        className="btn-primary w-full py-4 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none"
+        className="w-full
+    h-12
+    rounded-xl
+    bg-blue-600
+    hover:bg-blue-500
+    active:scale-[0.98]
+    transition-all
+    duration-200
+    text-white
+    font-semibold
+    text-sm
+    flex
+    items-center
+    justify-center
+    gap-2
+    disabled:bg-slate-700
+    disabled:text-slate-400
+    disabled:cursor-not-allowed"
       >
         {creating ? (
           <>
