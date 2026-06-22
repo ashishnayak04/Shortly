@@ -1,39 +1,71 @@
-# Shortly - URL Shortener SaaS
+<p align="center">
+  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React">
+  <img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB" alt="Express.js">
+  <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
+  <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS">
+  <img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
+</p>
 
-A modern, production-ready URL shortening platform built with React, Node.js, Express, and MongoDB.
+<h1 align="center">🔗 Shortly — URL Shortener SaaS</h1>
 
-## Features
+<p align="center">
+  A modern, full-stack URL shortening platform with custom aliases, QR codes, click analytics, and link expiration.
+  <br>
+  <strong>Built with React 19, Node.js, Express, MongoDB, and Tailwind CSS v4.</strong>
+</p>
 
-- **URL Shortening** — Generate short, shareable links instantly
-- **Custom Aliases** — Create memorable custom short codes
-- **QR Code Generation** — Auto-generated QR codes for every link
-- **Link Expiration** — Set expiry dates (1 day, 7 days, 30 days, custom)
-- **Click Analytics** — Track clicks, last visited, and engagement
-- **Dark Mode UI** — Modern SaaS-style glassmorphism design
-- **One-Click Copy** — Copy shortened URLs instantly
-- **Responsive** — Fully responsive across all devices
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#tech-stack">Tech Stack</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#api">API</a> •
+  <a href="#project-structure">Structure</a> •
+  <a href="#deployment">Deployment</a>
+</p>
 
-## Tech Stack
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| **URL Shortening** | Generate short, shareable links instantly |
+| **Custom Aliases** | Create memorable custom short codes (e.g. `short.ly/my-link`) |
+| **QR Code Generation** | Auto-generated, downloadable QR codes for every link |
+| **Link Expiration** | Set expiry dates (1 day, 7 days, 30 days, or custom) |
+| **Click Analytics** | Track total clicks, last visited time, and engagement |
+| **Dark Mode** | Seamless light/dark theme with system preference detection |
+| **One-Click Copy** | Copy shortened URLs and originals to clipboard instantly |
+| **Responsive Design** | Fully responsive across desktop, tablet, and mobile |
+| **Link Management** | View, search, filter, and delete all your links |
+| **Expired Link Handling** | Automatic 410 response for expired links |
+
+---
+
+## 🛠️ Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | React 19, Vite, Tailwind CSS v4 |
-| Backend | Node.js, Express.js |
-| Database | MongoDB, Mongoose |
-| Libraries | nanoid, qrcode, validator, axios, react-hot-toast, lucide-react |
+|---|---|
+| **Frontend** | React 19, Vite, Tailwind CSS v4, Lucide React |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB, Mongoose (with TTL index for auto-expiry) |
+| **Libraries** | nanoid (short codes), qrcode (QR generation), validator (URL validation), axios (HTTP), react-hot-toast (notifications), react-router-dom (routing) |
 
-## Quick Start
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js >= 18
-- MongoDB (local or Atlas)
+- MongoDB (local instance or [MongoDB Atlas](https://www.mongodb.com/atlas))
 
 ### Setup
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/<your-username>/shortly.git
 cd shortly
 
 # Install backend dependencies
@@ -60,28 +92,33 @@ CLIENT_URL=http://localhost:5173
 ### Run
 
 ```bash
-# Terminal 1 — Backend
+# Terminal 1 — Backend (http://localhost:5000)
 cd server
 npm run dev
 
-# Terminal 2 — Frontend
+# Terminal 2 — Frontend (http://localhost:5173)
 cd client
 npm run dev
 ```
 
-Open http://localhost:5173
+Open **http://localhost:5173** in your browser.
 
-## API Endpoints
+---
+
+## 📡 API
+
+### Endpoints
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/urls` | Create short URL |
-| GET | `/:shortCode` | Redirect to original URL |
-| GET | `/api/urls` | Get all URLs |
-| GET | `/api/urls/:shortCode/stats` | Get analytics |
-| DELETE | `/api/urls/:shortCode` | Delete URL |
+|---|---|---|
+| `POST` | `/api/urls` | Create a short URL |
+| `GET` | `/api/urls` | List all shortened URLs |
+| `GET` | `/:shortCode` | Redirect to original URL |
+| `GET` | `/api/urls/:shortCode/stats` | Get analytics for a URL |
+| `DELETE` | `/api/urls/:shortCode` | Delete a URL |
+| `GET` | `/health` | Health check |
 
-### Create Short URL
+### Example: Create a Short URL
 
 ```json
 POST /api/urls
@@ -92,73 +129,89 @@ POST /api/urls
 }
 ```
 
-## Project Structure
+**Response:**
+
+```json
+{
+  "message": "Short URL created successfully",
+  "url": {
+    "id": "...",
+    "longUrl": "https://example.com/very-long-url",
+    "shortCode": "my-link",
+    "shortUrl": "http://localhost:5000/my-link",
+    "qrCode": "data:image/png;base64,...",
+    "clicks": 0,
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "expiresAt": "2025-12-31T23:59:00.000Z"
+  }
+}
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 shortly/
-├── server/                  # Backend
+├── server/                        # Backend (Node.js + Express)
 │   ├── src/
-│   │   ├── config/          # Database config
-│   │   ├── controllers/     # Route handlers
-│   │   ├── middleware/       # Error handling
-│   │   ├── models/          # Mongoose schemas
-│   │   ├── routes/          # API routes
-│   │   ├── services/        # Business logic
-│   │   └── utils/           # Validators
-│   ├── .env
-│   └── server.js
+│   │   ├── config/db.js           # MongoDB connection
+│   │   ├── controllers/           # Route handlers
+│   │   ├── middleware/            # Error handling
+│   │   ├── models/Url.js          # Mongoose schema (URL model)
+│   │   ├── routes/                # API route definitions
+│   │   ├── services/              # Business logic
+│   │   └── utils/validators.js    # URL & alias validation
+│   ├── server.js                  # Entry point
+│   └── .env                       # Environment variables
 │
-├── client/                  # Frontend
+├── client/                        # Frontend (React + Vite)
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Page components
-│   │   ├── services/        # API client
-│   │   ├── hooks/           # Custom React hooks
-│   │   ├── utils/           # Helper functions
-│   │   └── layouts/         # Layout components
+│   │   ├── components/            # Reusable UI (UrlForm, ResultCard, Navbar, etc.)
+│   │   ├── pages/                 # Home, Analytics, NotFound
+│   │   ├── services/api.js        # Axios API client
+│   │   ├── context/               # ThemeContext (dark mode)
+│   │   ├── hooks/                 # Custom React hooks
+│   │   ├── utils/helpers.js       # Formatting, clipboard, expiration
+│   │   └── layouts/               # MainLayout (navbar + outlet)
 │   ├── index.html
 │   └── vite.config.js
 │
 ├── .env.example
+├── DEPLOYMENT.md
 └── README.md
 ```
 
-## Deployment
+---
 
-### Backend — Render
+## 🌐 Deployment
 
-1. Create a Render Web Service
-2. Set root directory: `server`
-3. Build command: `npm install`
-4. Start command: `npm start`
-5. Add environment variables from `.env.example`
+Deploy the stack for free on:
 
-### Frontend — Vercel
+| Service | Role | Guide |
+|---|---|---|
+| [Render](https://render.com) | Backend (Node.js/Express) | Set root dir: `server`, start: `npm start` |
+| [Vercel](https://vercel.com) | Frontend (React/Vite) | Framework: Vite, root dir: `client` |
+| [MongoDB Atlas](https://www.mongodb.com/atlas) | Database (M0 free tier) | Whitelist `0.0.0.0/0` for production |
 
-1. Import project to Vercel
-2. Set root directory: `client`
-3. Framework: Vite
-4. Add environment variable: `VITE_API_URL=https://your-render-app.onrender.com`
-5. Deploy
+A detailed deployment guide is available in [`DEPLOYMENT.md`](./DEPLOYMENT.md).
 
-### Database — MongoDB Atlas
+---
 
-1. Create free cluster on atlas.mongodb.com
-2. Get connection string
-3. Set as `MONGODB_URI` in backend environment
+## 🗺️ Future Roadmap
 
-## Future Improvements
+- [ ] User authentication (JWT / OAuth)
+- [ ] Rate limiting per IP / user
+- [ ] Password-protected links
+- [ ] Bulk URL shortening
+- [ ] Browser extension
+- [ ] Geolocation & device analytics
+- [ ] Public API with API keys
+- [ ] Team workspaces & collaboration
+- [ ] Custom domains for branded links
 
-- User authentication (JWT / OAuth)
-- Rate limiting per IP/user
-- Link password protection
-- Bulk URL shortening
-- Browser extension
-- Click geolocation & device analytics
-- Public API with API keys
-- Team collaboration & workspaces
-- Custom domains for branded links
+---
 
-## Resume Description
+## 📄 License
 
-> **Shortly** — A full-stack URL Shortener SaaS built with React, Node.js, Express, and MongoDB. Features include custom aliases, QR code generation, link expiration, and click analytics. Demonstrates RESTful API design, clean architecture, async/await patterns, centralized error handling, responsive dark-mode UI with glassmorphism design, and production-ready deployment on Vercel + Render + MongoDB Atlas.
+This project is open source and available under the [MIT License](LICENSE).
